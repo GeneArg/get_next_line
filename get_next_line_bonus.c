@@ -1,42 +1,42 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: eagranat <eagranat@student.42bangkok.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/06 12:56:26 by eagranat          #+#    #+#             */
-/*   Updated: 2024/03/11 16:22:43 by eagranat         ###   ########.fr       */
+/*   Updated: 2024/03/11 16:44:58 by eagranat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 char	*get_next_line(int fd)
 {
-	static t_list	*list = NULL;
+	static t_list	*list[1024];
 	t_list			*temp;
 	char			*next_line;
 	char			buffer;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0 || fd > 1024 || BUFFER_SIZE <= 0)
 		return (NULL);
 	if (read(fd, &buffer, 0) < 0)
 	{
-		while (list)
+		while (list[fd])
 		{
-			temp = list->next;
-			free(list->content);
-			free(list);
-			list = temp;
+			temp = list[fd]->next;
+			free(list[fd]->content);
+			free(list[fd]);
+			list[fd] = temp;
 		}
 		return (NULL);
 	}
-	make_list(&list, fd);
-	if (list == NULL)
+	make_list(list, fd);
+	if (list[fd] == NULL)
 		return (NULL);
-	next_line = give_line(list);
-	clear_list(&list);
+	next_line = give_line(list[fd]);
+	clear_list(&list[fd]);
 	return (next_line);
 }
 
@@ -45,37 +45,33 @@ void	make_list(t_list **list, int fd)
 	char	*buffer;
 	int		char_read;
 
-	while (!new_line(*list))
+	while (!new_line(list[fd]))
 	{
 		buffer = malloc(BUFFER_SIZE + 1);
 		if (buffer == NULL)
 			return ;
 		char_read = read(fd, buffer, BUFFER_SIZE);
-		if (char_read <= 0)
+		if (!char_read)
 		{
 			free(buffer);
-			buffer = NULL;
 			return ;
 		}
 		buffer[char_read] = '\0';
-		add_list(list, buffer);
+		add_list(list, buffer, fd);
 	}
 }
 
-void	add_list(t_list **list, char *buffer)
+void	add_list(t_list **list, char *buffer, int fd)
 {
 	t_list	*new;
 	t_list	*last;
 
 	new = malloc(sizeof(t_list));
 	if (new == NULL)
-	{
-		free(buffer);
 		return ;
-	}
-	last = find_last(*list);
+	last = find_last(list[fd]);
 	if (last == NULL)
-		*list = new;
+		list[fd] = new;
 	else
 		last->next = new;
 	new->content = buffer;
@@ -99,19 +95,19 @@ char	*give_line(t_list *list)
 
 void	clear_list(t_list **list)
 {
-	t_list	*last;
 	t_list	*clean;
+	t_list	*last;
 	int		i;
 	int		j;
 	char	*buffer;
 
 	buffer = malloc(BUFFER_SIZE + 1);
 	clean = malloc(sizeof(t_list));
-	if (buffer == NULL || clean == NULL)
+	if (clean == NULL || buffer == NULL)
 		return ;
-	last = find_last(*list);
 	i = 0;
 	j = 0;
+	last = find_last(*list);
 	while (last->content[i] && last->content[i] != '\n')
 		++i;
 	while (last->content[i] && last->content[++i])
@@ -121,3 +117,20 @@ void	clear_list(t_list **list)
 	clean->next = NULL;
 	release(list, clean, buffer);
 }
+
+// int main()
+// {
+// 	int fd;
+// 	char *line;
+
+// 	fd = open("test.txt", O_RDONLY);
+// 	line = get_next_line(fd);
+// 	printf("%s", line);
+// 	line = get_next_line(fd);
+// 	printf("%s", line);
+// 	line = get_next_line(fd);
+// 	printf("%s", line);
+// 	line = get_next_line(fd);
+// 	printf("%s", line);
+// 	return (0);
+// }

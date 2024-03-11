@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.h                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: eagranat <eagranat@student.42bangkok.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/06 13:01:53 by eagranat          #+#    #+#             */
-/*   Updated: 2024/03/11 13:26:27 by eagranat         ###   ########.fr       */
+/*   Updated: 2024/03/11 16:35:45 by eagranat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
+#ifndef GET_NEXT_LINE_BONUS_H
+# define GET_NEXT_LINE_BONUS_H
 
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 42
@@ -30,7 +30,7 @@ typedef struct s_list
 
 char	*get_next_line(int fd);
 void	make_list(t_list **list, int fd);
-void	add_list(t_list **list, char *buffer);
+void	add_list(t_list **list, char *buffer, int fd);
 char	*give_line(t_list *list);
 void	clear_list(t_list **list);
 void	release(t_list **list, t_list *clean, char *buffer);

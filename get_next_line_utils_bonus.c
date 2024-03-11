@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: eagranat <eagranat@student.42bangkok.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/06 17:13:36 by eagranat          #+#    #+#             */
-/*   Updated: 2024/03/11 16:23:25 by eagranat         ###   ########.fr       */
+/*   Updated: 2024/03/11 13:25:59 by eagranat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 void	release(t_list **list, t_list *clean, char *buffer)
 {
@@ -31,9 +31,7 @@ void	release(t_list **list, t_list *clean, char *buffer)
 	else
 	{
 		free(buffer);
-		buffer = NULL;
 		free(clean);
-		clean = NULL;
 	}
 }
 
