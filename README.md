@@ -1,76 +1,93 @@
-# Detailed Overview of Code Functions
+### Overview
 
-## get_next_line
-- Reads the next line from a file descriptor.
-- Parameters:
-  - `int fd`: File descriptor of the file.
-- Algorithm:
-  1. Reads data from the file descriptor into a buffer until a newline character is encountered.
-  2. Creates a linked list of strings from the data.
-  3. Retrieves the next line from the list.
-  4. Clears the list and returns the next line.
+This repository provides an efficient and reusable implementation of the `get_next_line` function in C, which reads lines from a file descriptor (`fd`) one at a time. It handles reading data from the file descriptor in chunks defined by `BUFFER_SIZE`, ensuring proper memory management and efficient line retrieval.
 
-## make_list
-- Creates a linked list of strings from data read from a file descriptor.
-- Parameters:
-  - `t_list **list`: Pointer to the pointer to the list.
-  - `int fd`: File descriptor of the file.
-- Algorithm:
-  1. Reads data from the file descriptor into a buffer until a newline character is encountered.
-  2. Adds the buffer content into the linked list.
-  3. Continues until a newline character is found.
+### Functions Overview
 
-## new_line
-- Checks if any string in a linked list contains a newline character.
-- Parameters:
-  - `t_list *list`: Pointer to the linked list of strings.
-- Algorithm:
-  1. Iterates through each node in the list.
-  2. Checks if any content in the node contains a newline character.
-  3. Returns 1 if found, 0 otherwise.
+1. **`get_next_line`**
+   - Reads the next line from the file descriptor.
+   - **Parameters**:
+     - `fd`: File descriptor from which to read.
+   - **Returns**:
+     - Pointer to the next line read from the file.
+   - **Flow**:
+     - Checks for invalid file descriptors or buffer sizes.
+     - Reads data from the file descriptor in chunks and stores it in a linked list.
+     - Retrieves the next line from the linked list and returns it.
+     - Clears the linked list after retrieving the line.
 
-## get_line
-- Retrieves the next line from a linked list of strings.
-- Parameters:
-  - `t_list *list`: Pointer to the linked list of strings.
-- Algorithm:
-  1. Calculates the length of the next line.
-  2. Copies the content of the list until a newline character is encountered into a new string.
-  3. Returns the new string.
+2. **`make_list`**
+   - Reads data from the file descriptor and stores it in a linked list.
+   - **Parameters**:
+     - `list`: Pointer to the linked list.
+     - `fd`: File descriptor from which to read.
+   - **Flow**:
+     - Reads data from the file descriptor in chunks and adds it to the linked list until a newline is encountered.
 
-## clear_list
-- Extracts the last incomplete line from a linked list, releases memory, and prepares for the next call.
-- Parameters:
-  - `t_list **list`: Pointer to the pointer to the list.
-- Algorithm:
-  1. Extracts the last incomplete line from the list.
-  2. Releases memory allocated for the list.
-  3. Prepares for the next call to `get_next_line`.
+3. **`add_list`**
+   - Adds a new node to the linked list.
+   - **Parameters**:
+     - `list`: Pointer to the linked list.
+     - `buffer`: Data to be stored in the new node.
+   - **Flow**:
+     - Allocates memory for a new node and adds it to the end of the linked list.
 
-## add_list
-- Adds a new node with the provided content to the end of a linked list.
-- Parameters:
-  - `t_list **list`: Pointer to the pointer to the list.
-  - `char *buffer`: Pointer to the content to be added.
-- Algorithm:
-  1. Creates a new node with the provided content.
-  2. Appends the new node to the end of the list.
+4. **`give_line`**
+   - Retrieves the next line from the linked list.
+   - **Parameters**:
+     - `list`: Pointer to the linked list.
+   - **Returns**:
+     - Pointer to the next line.
+   - **Flow**:
+     - Allocates memory for the next line and copies it from the linked list.
 
-## find_last
-- Finds the last node in a linked list.
-- Parameters:
-  - `t_list *list`: Pointer to the linked list.
-- Algorithm:
-  1. Iterates through the list until the last node is reached.
-  2. Returns a pointer to the last node.
+5. **`clear_list`**
+   - Clears the linked list after retrieving the line.
+   - **Parameters**:
+     - `list`: Pointer to the linked list.
+   - **Flow**:
+     - Extracts the remaining data in the last node of the list and updates the list accordingly.
 
-## release
-- Releases memory allocated for a linked list.
-- Parameters:
-  - `t_list **list`: Pointer to the pointer to the list.
-  - `t_list *clean`: Pointer to a node containing the last incomplete line.
-  - `char *buffer`: Pointer to the buffer for the last incomplete line.
-- Algorithm:
-  1. Frees memory for each node and its content in the list.
-  2. Sets the list pointer to NULL.
-  3. If `clean->content[0]` is not empty, assigns `clean` to the list. Otherwise, frees `clean` and `buffer`.
+6. **`release`**
+   - Releases memory used by the linked list.
+   - **Parameters**:
+     - `list`: Pointer to the linked list.
+     - `clean`: Pointer to a temporary list node.
+     - `buffer`: Temporary buffer for data extraction.
+   - **Flow**:
+     - Frees memory used by the linked list nodes and handles special cases where the last node may need partial retention.
+
+7. **`len_new_line`**
+   - Calculates the length of the next line.
+   - **Parameters**:
+     - `list`: Pointer to the linked list.
+   - **Returns**:
+     - Length of the next line.
+   - **Flow**:
+     - Iterates through the linked list to find the newline character and calculates the length of the line.
+
+8. **`copy_string`**
+   - Copies the next line from the linked list to a string.
+   - **Parameters**:
+     - `list`: Pointer to the linked list.
+     - `str`: Pointer to the destination string.
+   - **Flow**:
+     - Copies data from the linked list nodes to the destination string until a newline character is encountered.
+
+9. **`find_last`**
+   - Finds the last node in the linked list.
+   - **Parameters**:
+     - `list`: Pointer to the linked list.
+   - **Returns**:
+     - Pointer to the last node.
+   - **Flow**:
+     - Traverses the linked list to find the last node.
+
+10. **`new_line`**
+    - Checks if a newline character exists in the current chunk of data.
+    - **Parameters**:
+      - `list`: Pointer to the linked list.
+    - **Returns**:
+      - `1` if a newline character exists, `0` otherwise.
+    - **Flow**:
+      - Iterates through the current chunk of data to find a newline character.
