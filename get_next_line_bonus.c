@@ -6,7 +6,7 @@
 /*   By: eagranat <eagranat@student.42bangkok.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/06 12:56:26 by eagranat          #+#    #+#             */
-/*   Updated: 2024/03/11 16:44:58 by eagranat         ###   ########.fr       */
+/*   Updated: 2024/03/12 13:42:11 by eagranat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,10 @@ char	*get_next_line(int fd)
 	static t_list	*list[1024];
 	t_list			*temp;
 	char			*next_line;
-	char			buffer;
 
 	if (fd < 0 || fd > 1024 || BUFFER_SIZE <= 0)
 		return (NULL);
-	if (read(fd, &buffer, 0) < 0)
+	if (make_list(list, fd))
 	{
 		while (list[fd])
 		{
@@ -32,7 +31,6 @@ char	*get_next_line(int fd)
 		}
 		return (NULL);
 	}
-	make_list(list, fd);
 	if (list[fd] == NULL)
 		return (NULL);
 	next_line = give_line(list[fd]);
@@ -40,7 +38,7 @@ char	*get_next_line(int fd)
 	return (next_line);
 }
 
-void	make_list(t_list **list, int fd)
+int	make_list(t_list **list, int fd)
 {
 	char	*buffer;
 	int		char_read;
@@ -49,16 +47,24 @@ void	make_list(t_list **list, int fd)
 	{
 		buffer = malloc(BUFFER_SIZE + 1);
 		if (buffer == NULL)
-			return ;
+			return (0);
 		char_read = read(fd, buffer, BUFFER_SIZE);
 		if (!char_read)
 		{
 			free(buffer);
-			return ;
+			buffer = NULL;
+			return (0);
+		}
+		if (char_read < 0)
+		{
+			free(buffer);
+			buffer = NULL;
+			return (1);
 		}
 		buffer[char_read] = '\0';
 		add_list(list, buffer, fd);
 	}
+	return (0);
 }
 
 void	add_list(t_list **list, char *buffer, int fd)
@@ -118,19 +124,29 @@ void	clear_list(t_list **list)
 	release(list, clean, buffer);
 }
 
-// int main()
+// write main to test multiple file descriptors one line of each every time
+
+// int main ()
 // {
-// 	int fd;
+// 	int fd1 = open("test1.txt", O_RDONLY);
+// 	int fd2 = open("test2.txt", O_RDONLY);
 // 	char *line;
 
-// 	fd = open("test.txt", O_RDONLY);
-// 	line = get_next_line(fd);
-// 	printf("%s", line);
-// 	line = get_next_line(fd);
-// 	printf("%s", line);
-// 	line = get_next_line(fd);
-// 	printf("%s", line);
-// 	line = get_next_line(fd);
-// 	printf("%s", line);
-// 	return (0);
+// 	line = get_next_line(fd1);
+// 	printf("%s\n", line);
+// 	free(line);
+// 	line = get_next_line(fd2);
+// 	printf("%s\n", line);
+// 	free(line);
+// 	line = get_next_line(fd1);
+// 	printf("%s\n", line);
+// 	free(line);
+// 	line = get_next_line(fd2);
+// 	printf("%s\n", line);
+// 	free(line);
+// 	line = get_next_line(fd3);
+// 	printf("%s\n", line);
+// 	free(line);
+// 	close(fd1);
+// 	close(fd2);
 // }

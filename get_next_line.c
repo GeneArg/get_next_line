@@ -6,7 +6,7 @@
 /*   By: eagranat <eagranat@student.42bangkok.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/06 12:56:26 by eagranat          #+#    #+#             */
-/*   Updated: 2024/03/11 16:22:43 by eagranat         ###   ########.fr       */
+/*   Updated: 2024/03/12 13:42:29 by eagranat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,10 @@ char	*get_next_line(int fd)
 	static t_list	*list = NULL;
 	t_list			*temp;
 	char			*next_line;
-	char			buffer;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	if (read(fd, &buffer, 0) < 0)
+	if (make_list(&list, fd))
 	{
 		while (list)
 		{
@@ -32,7 +31,6 @@ char	*get_next_line(int fd)
 		}
 		return (NULL);
 	}
-	make_list(&list, fd);
 	if (list == NULL)
 		return (NULL);
 	next_line = give_line(list);
@@ -40,7 +38,7 @@ char	*get_next_line(int fd)
 	return (next_line);
 }
 
-void	make_list(t_list **list, int fd)
+int	make_list(t_list **list, int fd)
 {
 	char	*buffer;
 	int		char_read;
@@ -49,17 +47,24 @@ void	make_list(t_list **list, int fd)
 	{
 		buffer = malloc(BUFFER_SIZE + 1);
 		if (buffer == NULL)
-			return ;
+			return (0);
 		char_read = read(fd, buffer, BUFFER_SIZE);
-		if (char_read <= 0)
+		if (!char_read)
 		{
 			free(buffer);
 			buffer = NULL;
-			return ;
+			return (0);
+		}
+		if (char_read < 0)
+		{
+			free(buffer);
+			buffer = NULL;
+			return (1);
 		}
 		buffer[char_read] = '\0';
 		add_list(list, buffer);
 	}
+	return (0);
 }
 
 void	add_list(t_list **list, char *buffer)
@@ -121,3 +126,22 @@ void	clear_list(t_list **list)
 	clean->next = NULL;
 	release(list, clean, buffer);
 }
+
+// write main to test with linked lists.
+
+// int main()
+// {
+// 	int fd = open("test.txt", O_RDONLY);
+// 	char *line;
+// 	int no = 1;
+// 	line = get_next_line(fd);
+// 	while (line)
+// 	{
+// 		printf("%i: %s", no, line);
+// 		free(line);
+// 		line = get_next_line(fd);
+// 		no++;
+// 	}
+// 	close(fd);
+// 	return (0);
+// }

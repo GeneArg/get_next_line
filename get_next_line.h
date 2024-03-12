@@ -6,7 +6,7 @@
 /*   By: eagranat <eagranat@student.42bangkok.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/06 13:01:53 by eagranat          #+#    #+#             */
-/*   Updated: 2024/03/11 13:26:27 by eagranat         ###   ########.fr       */
+/*   Updated: 2024/03/12 13:38:31 by eagranat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ typedef struct s_list
 }				t_list;
 
 char	*get_next_line(int fd);
-void	make_list(t_list **list, int fd);
+int		make_list(t_list **list, int fd);
 void	add_list(t_list **list, char *buffer);
 char	*give_line(t_list *list);
 void	clear_list(t_list **list);
